@@ -1,4 +1,3 @@
-import bcrypt from "bcrypt";
 import { Admin } from "../models/admin.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
