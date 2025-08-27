@@ -28,18 +28,68 @@ const userSchema = new mongoose.Schema({
         type : String,
         default : "https://i.ibb.co/MBtjqXQ/default-profile.png",
     },
-    isAdmin : {
-        type : Boolean,
-        default : false
+    role : {
+        type : String,
+        enum : ["user", "admin"],
+        default : "user"
+    },
+    status : {
+        type : String,
+        enum : ["active", "inactive", "banned"],
+        default : "active"
     },
     myList : [
         {
             type : mongoose.Schema.Types.ObjectId,
             ref : "Movie"
         }
-    ]
+    ],
+    subscription : {
+        plan : {
+            type : mongoose.Schema.Types.ObjectId,
+            ref : "Subscription"
+        },
+        startDate : {
+            type : Date
+        },
+        endDate : {
+            type : Date
+        },
+        isActive : {
+            type : Boolean,
+            default : false
+        }
+    },
+    profiles : [
+        {
+            name : {
+                type : String,
+                required : true
+            },
+            avatar : {
+                type : String,
+                default : "https://i.ibb.co/MBtjqXQ/default-profile.png"
+            },
+            maturityLevel : {
+                type : String,
+                enum : ["Adult", "Kids","Teen"],
+                default : "Adult"
+            },
+            myList : [
+                {
+                    type : mongoose.Schema.Types.ObjectId,
+                    ref : "Movie"
+                }
+            ]
+        }
+    ],
+    resetPasswordToken: String,
+    resetPasswordExpire: Date
 },{timestamps : true});
 
+// Indexes
+userSchema.index({ email: 1 });
+userSchema.index({ "subscription.plan": 1 });
 
 // Encrypt password before saving
 userSchema.pre("save", async function (next) {
@@ -59,7 +109,7 @@ userSchema.methods.generateAccessToken = function(){
         {
             id : this._id,
             email : this.email,
-            isAdmin : this.isAdmin
+            role : this.role
         },
         process.env.ACCESS_TOKEN_SECRET,
         {
