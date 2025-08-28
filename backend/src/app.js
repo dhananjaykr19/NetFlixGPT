@@ -22,4 +22,7 @@ app.use(cookieParser());
 import adminRouter from "./routes/admin.route.js";
 app.use("/api/v1/admin", adminRouter);
 
+import userRouter from "./routes/user.route.js";
+app.use("/api/v1/users", userRouter);
+
 export { app };
