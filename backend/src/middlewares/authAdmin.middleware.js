@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import { Admin } from "../models/admin.model.js";
-import { ApiError } from "../utils/apiError.js";
+import { ApiError } from "../utils/ApiError.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 
 export const protectAdmin = asyncHandler( async(req, _, next) => {
