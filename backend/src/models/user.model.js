@@ -24,7 +24,7 @@ const userSchema = new mongoose.Schema({
         minlength : [6, "Please add atleast 6 digit password"],
         select : false // hide password in queries
     },
-    profilePic : {
+    avatar : {
         type : String,
         default : "https://i.ibb.co/MBtjqXQ/default-profile.png",
     },
