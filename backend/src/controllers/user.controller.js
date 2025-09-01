@@ -78,3 +78,23 @@ export const loginUser = asyncHandler(async(req, res) => {
         refreshToken,
     });
 });
+
+export const logoutUser = asyncHandler(async(req, res) => {
+    const userId = req.user._id;
+    await User.findByIdAndUpdate(userId, {
+        $unset : {
+            refreshToken : 1
+        }
+    });
+    res.clearCookie("userToken", {
+        httpOnly : true,
+        secure : process.env.NODE_ENV === "production"
+    });
+    res.clearCookie("refreshToken", {
+        httpOnly : true,
+        secure : process.env.NODE_ENV === "production"
+    });
+    res.status(200).json({
+        message : "Logged out successfully"
+    });
+});
