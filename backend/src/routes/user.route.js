@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { addMovieInList, getUserProfile, loginUser, logoutUser, registerUser, removeMovieList } from "../controllers/user.controller.js";
+import { addMovieInList, getMyMovieList, getUserProfile, loginUser, logoutUser, registerUser, removeMovieList } from "../controllers/user.controller.js";
 import { upload } from "../middlewares/multer.middleware.js";
 import { protectedUser } from "../middlewares/authUser.middleware.js";
 
@@ -17,6 +17,7 @@ router.route("/register").post(
 router.route("/login").post(loginUser);
 router.route("/logout").post(protectedUser, logoutUser);
 router.route("/user").post(protectedUser, getUserProfile);
-router.route("/addMovie").post(protectedUser, addMovieInList);
-router.route("/removeMovie").post(protectedUser, removeMovieList);
+router.route("/movie-list").get(protectedUser, getMyMovieList);
+router.route("/movie-list/addMovie").post(protectedUser, addMovieInList);
+router.route("/movie-list/removeMovie").post(protectedUser, removeMovieList);
 export default router;
