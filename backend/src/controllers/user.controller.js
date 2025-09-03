@@ -36,8 +36,10 @@ export const registerUser = asyncHandler(async(req, res) => {
         throw new ApiError(500, "Something went wrong to createdUser");
     }
     res.status(201).json({
-        message : "User registered successfully",
-        user : createdUser
+        success: true,
+        message: "User registered successfully",
+        data: createdUser
+
     });
 });
 
@@ -72,10 +74,9 @@ export const loginUser = asyncHandler(async(req, res) => {
     });
     const userData = await User.findById(user?._id).select("-password -refreshToken");
     res.status(200).json({
-        message : "Login successful",
-        user : userData,
-        accessToken,
-        refreshToken,
+        success: true,
+        message: "Login successful",
+        data: userData
     });
 });
 
@@ -83,7 +84,7 @@ export const logoutUser = asyncHandler(async(req, res) => {
     const userId = req.user._id;
     await User.findByIdAndUpdate(userId, {
         $unset : {
-            refreshToken : 1
+            refreshToken : ""
         }
     });
     res.clearCookie("userToken", {
@@ -95,6 +96,63 @@ export const logoutUser = asyncHandler(async(req, res) => {
         secure : process.env.NODE_ENV === "production"
     });
     res.status(200).json({
-        message : "Logged out successfully"
+        success: true,
+        message: "Logged out successfully"
+    });
+});
+
+export const getUserProfile = asyncHandler(async(req, res) => {
+    res.status(200).json({
+        success: true,
+        message: "Profile fetched successfully",
+        data: req.user,
+    });
+});
+
+export const getMyMovieList = asyncHandler(async(req, res) => {
+    const user = await User.findById(req.user?._id);
+    if(!user){
+        throw new ApiError(401, "Invalid credentials");
+    }
+    res.status(200).json({
+        success : true,
+        message : "Fetched My List successfully",
+        data : user?.myList
+    });
+});
+
+export const addMovieInList = asyncHandler(async(req, res) => {
+    const { movieId } = req.body;
+    if(!movieId){
+        throw new ApiError(400, "Movie ID is required");
+    }
+    const userId = req.user._id;
+    if(!userId){
+        throw new ApiError(400, "user Id is required");
+    }
+    const user = await User.findById(userId);
+    if(user.myList.some((id) => id.toString() === movieId)){
+        throw new ApiError(400, "Movie already in list");
+    }
+    user.myList.push(movieId);
+    await user.save();
+    res.status(200).json({
+        success: true,
+        message: "Movie added to MyList",
+        data: user.myList
+    });
+});
+
+export const removeMovieList = asyncHandler(async(req, res) => {
+    const { movieId } = req.body;
+    if (!movieId) 
+        throw new ApiError(400, "Movie ID is required");
+    const user = await User.findById(req.user._id);
+    user.myList = user.myList.filter(id => id.toString() !== movieId);
+    await user.save();
+    res.status(200).json({
+        success: true,
+        message: "Movie removed from MyList",
+        data: user.myList
     });
 });
