@@ -25,4 +25,7 @@ app.use("/api/v1/admin", adminRouter);
 import userRouter from "./routes/user.route.js";
 app.use("/api/v1/users", userRouter);
 
+import movieRouter from "./routes/movie.route.js";
+app.use("/api/v1/movies", movieRouter);
+
 export { app };
