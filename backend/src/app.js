@@ -28,4 +28,7 @@ app.use("/api/v1/users", userRouter);
 import movieRouter from "./routes/movie.route.js";
 app.use("/api/v1/movies", movieRouter);
 
+import watchRouter from "./routes/watchHistory.route.js";
+app.use("/api/v1/watchHistory", watchRouter);
+
 export { app };
